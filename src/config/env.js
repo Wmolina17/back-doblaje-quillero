@@ -19,7 +19,7 @@ module.exports = {
   mongoUri: process.env.MONGO_URI,
   adminUser: process.env.ADMIN_USER,
   adminSecret: process.env.ADMIN_SECRET,
-  corsOrigins: list(process.env.CORS_ORIGINS),
+  corsOrigins: list(process.env.CORS_ORIGINS).map((origin) => origin.replace(/\/+$/, "")),
   brevoApiKey: process.env.BREVO_API_KEY || "",
   emailFrom: process.env.EMAIL_FROM || "",
   siteUrl: (process.env.SITE_URL || "https://doblajequillero.com").replace(/\/$/, ""),
