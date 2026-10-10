@@ -3,6 +3,9 @@ const Ticket = require("../models/Ticket");
 const { HttpError } = require("../utils/http");
 const { IMAGE_LIMITS, isValidImage, isHttpUrl } = require("../utils/validation");
 const { getTicketStats, findActiveRaffle } = require("../services/raffle.service");
+const { generatePrizeNumbers } = require("../utils/prizeNumbers");
+
+const DEFAULT_TOTAL_TICKETS = 10000;
 
 const parseRaffleInput = (body, { partial }) => {
   const data = {};
@@ -10,14 +13,38 @@ const parseRaffleInput = (body, { partial }) => {
 
   if (has("name")) data.name = String(body.name).trim();
   if (has("description")) data.description = String(body.description).trim();
+  if (has("prizeNumberAmount")) data.prizeNumberAmount = String(body.prizeNumberAmount).trim();
   if (has("drawDate")) data.drawDate = body.drawDate ? new Date(body.drawDate) : null;
   if (has("visible")) data.visible = Boolean(body.visible);
 
-  for (const key of ["ticketPrice", "minTickets", "maxTicketsPerPurchase", "totalTickets"]) {
+  for (const key of ["ticketPrice", "minTickets", "maxTicketsPerPurchase", "totalTickets", "goalPercent", "campaignDays"]) {
     if (!has(key)) continue;
     const value = Number(body[key]);
     if (!Number.isFinite(value) || value < 0) throw new HttpError(400, `Valor inválido para ${key}`);
     data[key] = key === "ticketPrice" ? value : Math.floor(value);
+  }
+  if (data.goalPercent !== undefined && (data.goalPercent < 1 || data.goalPercent > 100)) {
+    throw new HttpError(400, "La meta de venta debe estar entre 1% y 100%.");
+  }
+  if (data.campaignDays !== undefined && data.campaignDays < 1) {
+    throw new HttpError(400, "La duración de la campaña debe ser de al menos 1 día.");
+  }
+
+  // Los números premiados solo se definen al crear el evento para no alterarlos con ventas en curso.
+  if (!partial) {
+    const count = Math.floor(Number(body.prizeNumbersCount) || 0);
+    const total = data.totalTickets ?? DEFAULT_TOTAL_TICKETS;
+    if (count < 0 || count > total) throw new HttpError(400, "Cantidad de números premiados inválida.");
+    data.prizeNumbersCount = count;
+    data.prizeNumbers = generatePrizeNumbers(count, total);
+  }
+
+  if (has("expenses")) {
+    data.expenses = Array.isArray(body.expenses)
+      ? body.expenses
+          .filter((item) => item && String(item.concept || "").trim())
+          .map((item) => ({ concept: String(item.concept).trim(), amount: Math.max(0, Number(item.amount) || 0) }))
+      : [];
   }
 
   if (has("images")) {
@@ -62,7 +89,7 @@ const getCurrent = async (req, res) => {
   if (!raffle) return res.json({ raffle: null, stats: null });
 
   const stats = await getTicketStats(raffle._id);
-  const { totalTickets, ...publicRaffle } = raffle;
+  const { totalTickets, expenses, goalPercent, campaignDays, prizeNumbersCount, ...publicRaffle } = raffle;
   const available = raffle.visible ? Math.max(0, totalTickets - stats.sold - stats.pending) : 0;
   res.json({
     raffle: publicRaffle,

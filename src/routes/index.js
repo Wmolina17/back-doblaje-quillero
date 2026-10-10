@@ -4,6 +4,7 @@ const { requireAdmin, requireClient } = require("../middlewares/auth");
 const { createRateLimiter } = require("../middlewares/rateLimit");
 const auth = require("../controllers/auth.controller");
 const raffle = require("../controllers/raffle.controller");
+const finance = require("../controllers/finance.controller");
 const tickets = require("../controllers/ticket.controller");
 const paymentMethods = require("../controllers/paymentMethod.controller");
 const settings = require("../controllers/settings.controller");
@@ -31,6 +32,7 @@ router.put("/settings", h(settings.update));
 
 router.get("/raffle/full", h(raffle.getFull));
 router.get("/raffle/stats", h(raffle.getAdminStats));
+router.get("/raffle/finance", h(finance.getFinance));
 router.post("/raffle", h(raffle.create));
 router.put("/raffle", h(raffle.update));
 router.post("/raffle/finish", h(raffle.finish));

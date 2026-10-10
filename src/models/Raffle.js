@@ -8,6 +8,14 @@ const PrizeSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const ExpenseSchema = new mongoose.Schema(
+  {
+    concept: { type: String, trim: true },
+    amount: { type: Number, min: 0, default: 0 },
+  },
+  { _id: false },
+);
+
 const RaffleSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -19,6 +27,12 @@ const RaffleSchema = new mongoose.Schema(
     drawDate: { type: Date },
     images: [String],
     prizes: [PrizeSchema],
+    prizeNumbersCount: { type: Number, default: 0, min: 0 },
+    prizeNumbers: [String],
+    prizeNumberAmount: { type: String, trim: true },
+    expenses: [ExpenseSchema],
+    goalPercent: { type: Number, default: 85, min: 1, max: 100 },
+    campaignDays: { type: Number, default: 20, min: 1 },
     visible: { type: Boolean, default: true },
     status: { type: String, enum: ["active", "finished"], default: "active", index: true },
     finishedAt: { type: Date },
