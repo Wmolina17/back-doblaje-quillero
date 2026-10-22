@@ -48,7 +48,7 @@ const create = async (req, res) => {
   if (!EMAIL_REGEX.test(email || "")) throw new HttpError(400, "Correo inválido");
   if (!PHONE_REGEX.test(phone || "")) throw new HttpError(400, "Número telefónico inválido");
   if (!isValidImage(voucher, IMAGE_LIMITS.voucherBytes)) {
-    throw new HttpError(400, "Adjunta un comprobante de pago válido (máx. 400 KB).");
+    throw new HttpError(400, "Adjunta un comprobante de pago válido (máx. 150 KB).");
   }
 
   const raffle = await getActiveRaffle();

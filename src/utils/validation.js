@@ -13,7 +13,7 @@ const PHONE_REGEX = /^\+?[0-9\s-]{7,20}$/;
 const IMAGE_DATA_URL_REGEX = /^data:image\/(png|jpe?g|webp);base64,[A-Za-z0-9+/=]+$/;
 
 const IMAGE_LIMITS = {
-  voucherBytes: 400 * 1024,
+  voucherBytes: 150 * 1024,
   raffleImageBytes: 600 * 1024,
   raffleImages: 8,
 };
