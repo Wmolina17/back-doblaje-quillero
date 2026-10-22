@@ -52,19 +52,19 @@ const create = async (req, res) => {
   }
 
   const raffle = await getActiveRaffle();
-  if (!raffle.visible) throw new HttpError(400, "El evento no está disponible en este momento.");
+  if (!raffle.visible) throw new HttpError(400, "La colección no está disponible en este momento.");
 
   if (!Number.isInteger(quantity) || quantity < raffle.minTickets || quantity > raffle.maxTicketsPerPurchase) {
     throw new HttpError(
       400,
-      `Debes comprar entre ${raffle.minTickets} y ${raffle.maxTicketsPerPurchase} boletos.`,
+      `Debes comprar entre ${raffle.minTickets} y ${raffle.maxTicketsPerPurchase} stickers.`,
     );
   }
 
   const stats = await getTicketStats(raffle._id);
   const available = raffle.totalTickets - stats.sold - stats.pending;
   if (quantity > available) {
-    throw new HttpError(400, "No hay suficientes boletos disponibles para esa cantidad. Intenta con menos.");
+    throw new HttpError(400, "No hay suficientes stickers disponibles para esa cantidad. Intenta con menos.");
   }
 
   const [method, settings] = await Promise.all([
@@ -172,7 +172,7 @@ const approve = async (req, res) => {
   const raffle = await findTicketRaffle(ticket);
   if (raffle.status !== "active") throw new HttpError(400, "El evento de esta compra ya finalizó.");
   const codes = await generateApprovalCodes(ticket.numberTickets, raffle.totalTickets, raffle._id);
-  if (!codes) throw new HttpError(400, "No quedan números disponibles");
+  if (!codes) throw new HttpError(400, "No quedan seriales disponibles");
 
   ticket.approved = true;
   ticket.approvalCodes = codes;

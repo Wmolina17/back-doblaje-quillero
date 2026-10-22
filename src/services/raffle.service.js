@@ -7,7 +7,7 @@ const findActiveRaffle = () => Raffle.findOne({ status: "active" });
 
 const getActiveRaffle = async () => {
   const raffle = await findActiveRaffle();
-  if (!raffle) throw new HttpError(400, "No hay un evento activo en este momento.");
+  if (!raffle) throw new HttpError(400, "No hay una colección disponible en este momento.");
   return raffle;
 };
 

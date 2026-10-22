@@ -21,7 +21,7 @@ const socials = Object.fromEntries(
 const SettingsSchema = new mongoose.Schema(
   {
     siteName: { type: String, trim: true, default: "Doblaje Quillero" },
-    tagline: { type: String, trim: true, default: "Eventos oficiales de Doblaje Quillero Inc." },
+    tagline: { type: String, trim: true, default: "Stickers oficiales de Doblaje Quillero Inc." },
     aboutText: { type: String, trim: true, default: "" },
     logoUrl: { type: String, trim: true, default: "" },
     supportPhone: { type: String, trim: true, default: "" },

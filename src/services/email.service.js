@@ -34,8 +34,8 @@ const sendApprovedTicketEmail = async ({ ticket, raffle, resend = false }) => {
     to: ticket.email,
     name: ticket.fullName,
     subject: resend
-      ? `Tus números de ${raffle.name} | ${settings.siteName}`
-      : `¡Compra confirmada! Tus números de ${raffle.name}`,
+      ? `Tus seriales de ${raffle.name} | ${settings.siteName}`
+      : `¡Compra confirmada! Tus stickers de ${raffle.name}`,
     html: approvedTicketTemplate({ settings, ticket, raffle, resend }),
   });
 };

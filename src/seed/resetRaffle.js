@@ -21,8 +21,8 @@ const NEW_DATA = {
   totalTickets: TOTAL_TICKETS,
   prizes: [
     { title: "Premio mayor", amount: "iPhone 18 Pro Max 512 GB" },
-    { title: "Número invertido", amount: "iPhone 18 Pro 256 GB" },
-    { title: "Números premiados", amount: "6 premios de $500.000" },
+    { title: "Serial invertido", amount: "iPhone 18 Pro 256 GB" },
+    { title: "Seriales premiados", amount: "6 premios de $500.000" },
   ],
   prizeNumbersCount: PRIZE_NUMBERS_COUNT,
   prizeNumberAmount: "$500.000",
@@ -52,9 +52,9 @@ const run = async () => {
   }
 
   const newRaffle = {
-    name: previous?.name ?? "Rifa Doblaje Quillero",
+    name: previous?.name ?? "Stickers Doblaje Quillero",
     description:
-      "¡Dos iPhone en juego! El iPhone 18 Pro Max de 512 GB para las cuatro cifras del sorteo y un iPhone 18 Pro de 256 GB para el número invertido (ej: 1234 se invierte a 4321). Además, 6 números premiados de $500.000 cada uno. Compra mínima de 5 números. ¡Eche, no te quedes por fuera, mi llave!",
+      "¡Colección oficial de stickers! Cada sticker trae un número de serie único. El serial ganador se lleva un iPhone 18 Pro Max de 512 GB y el serial invertido un iPhone 18 Pro de 256 GB (ej: 1234 se invierte a 4321). Además, 6 seriales premiados de $500.000 cada uno. Compra mínima de 5 stickers. ¡Eche, no te quedes sin el tuyo, mi llave!",
     drawDate: previous?.drawDate,
     images: previous?.images ?? [],
     visible: previous?.visible ?? true,

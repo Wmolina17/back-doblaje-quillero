@@ -129,25 +129,25 @@ const renderLayout = ({ settings, preheader, body }) => {
 };
 
 const approvedTicketTemplate = ({ settings, ticket, raffle, resend }) => {
-  const title = resend ? "Aquí están de nuevo tus números" : "¡Tu compra fue aprobada!";
+  const title = resend ? "Aquí están de nuevo tus seriales" : "¡Tu compra fue aprobada!";
   const body = `
     <p style="margin:0;color:${COLORS.gold};font-size:12px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;">${escapeHtml(raffle.name)}</p>
     <h1 style="margin:8px 0 12px;color:${COLORS.goldLight};font-size:26px;">${title}</h1>
-    <p style="margin:0 0 24px;">Hola <strong>${escapeHtml(ticket.fullName)}</strong>, ¡gracias por participar! Estos son tus números:</p>
+    <p style="margin:0 0 24px;">Hola <strong>${escapeHtml(ticket.fullName)}</strong>, ¡gracias por tu compra! Estos son los números de serie de tus stickers:</p>
     <div style="margin:0 0 24px;">${renderCodes(ticket.approvalCodes)}</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align:left;">
-      ${infoRow("Boletos", String(ticket.approvalCodes.length))}
+      ${infoRow("Stickers", String(ticket.approvalCodes.length))}
       ${infoRow("Método de pago", ticket.paymentMethod)}
       ${infoRow("Total pagado", formatMoney(ticket.amountPaid, ticket.currency))}
       ${infoRow("Referencia", ticket.reference)}
-      ${raffle.drawDate ? infoRow("Fecha del evento", formatDate(raffle.drawDate)) : ""}
+      ${raffle.drawDate ? infoRow("Fecha de premiación", formatDate(raffle.drawDate)) : ""}
     </table>
-    <p style="margin:24px 0 0;color:${COLORS.muted};font-size:13px;">Los números se asignan de forma aleatoria. Entre más boletos, más oportunidades. ¡Mucha suerte, mi llave!</p>
-    ${button(env.siteUrl, "Ver el evento")}`;
+    <p style="margin:24px 0 0;color:${COLORS.muted};font-size:13px;">Cada sticker trae un serial único y algunos vienen premiados. Entre más stickers, más chance. ¡Mucha suerte, mi llave!</p>
+    ${button(env.siteUrl, "Ver la colección")}`;
 
   return renderLayout({
     settings,
-    preheader: `Tus números para ${raffle.name}: ${ticket.approvalCodes.slice(0, 5).join(", ")}`,
+    preheader: `Tus seriales de ${raffle.name}: ${ticket.approvalCodes.slice(0, 5).join(", ")}`,
     body,
   });
 };

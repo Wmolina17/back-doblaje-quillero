@@ -2,9 +2,9 @@ const Settings = require("../models/Settings");
 
 const SEED = {
   siteName: "Doblaje Quillero",
-  tagline: "Eventos oficiales de Doblaje Quillero Inc. by Jason David",
+  tagline: "Stickers oficiales de Doblaje Quillero Inc. by Jason David",
   aboutText:
-    "Somos Doblaje Quillero Inc., el proyecto de humor creado por Jason David desde Barranquilla. Doblajes chistosos, personajes como el Drilococo y la serie animada \"La Corte\". Ahora también realizamos eventos con premios para toda la comunidad que nos ha acompañado.",
+    "Somos Doblaje Quillero Inc., el proyecto de humor creado por Jason David desde Barranquilla. Doblajes chistosos, personajes como el Drilococo y la serie animada \"La Corte\". Ahora también lanzamos colecciones de stickers oficiales, y algunos vienen premiados para toda la comunidad que nos ha acompañado.",
   supportWhatsapp: "+57 3122161182",
   advertisingPhone: "+57 3122161182",
   socials: {
