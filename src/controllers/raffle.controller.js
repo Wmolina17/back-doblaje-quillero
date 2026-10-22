@@ -85,7 +85,7 @@ const requireActiveRaffle = async () => {
 };
 
 const getCurrent = async (req, res) => {
-  const raffle = await findActiveRaffle().lean();
+  const raffle = await findActiveRaffle().select("-images").lean();
   if (!raffle) return res.json({ raffle: null, stats: null });
 
   const stats = await getTicketStats(raffle._id);
