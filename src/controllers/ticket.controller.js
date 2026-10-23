@@ -87,6 +87,7 @@ const create = async (req, res) => {
       quantity,
       currency: method.currency,
       usdRate: settings.usdRate,
+      provider: method.provider,
     }),
     voucher,
   });
@@ -234,11 +235,13 @@ const update = async (req, res) => {
 
   if (recalculate) {
     const [raffle, settings] = await Promise.all([findTicketRaffle(ticket), Settings.getSingleton()]);
+    const method = await findPaymentMethod(ticket.paymentMethodId, { onlyActive: false });
     ticket.amountPaid = calculateAmount({
       ticketPrice: raffle.ticketPrice,
       quantity: ticket.numberTickets,
       currency: ticket.currency,
       usdRate: settings.usdRate,
+      provider: method.provider,
     });
   }
 
