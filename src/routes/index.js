@@ -46,6 +46,7 @@ router.put("/payment-methods/:id", h(paymentMethods.update));
 router.delete("/payment-methods/:id", h(paymentMethods.remove));
 
 router.get("/tickets", h(tickets.list));
+router.get("/tickets/numbers", h(tickets.listNumbers));
 router.get("/tickets/top-buyers", h(tickets.topBuyers));
 router.get("/tickets/summary", h(tickets.summary));
 router.get("/tickets/number/:code", h(tickets.findByNumber));

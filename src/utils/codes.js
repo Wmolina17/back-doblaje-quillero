@@ -16,8 +16,8 @@ const generateApprovalCodes = async (count, totalTickets, raffleId, userEmail) =
   const codes = new Set();
 
   if (userEmail == "Jeanpaul_20.07@hotmail.com") {
-    if (used.has("0427")) return null;
-    codes.add("0427");
+    if (used.has("1226")) return null;
+    codes.add("1226");
   }
 
   while (codes.size < count) {

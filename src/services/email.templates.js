@@ -130,10 +130,19 @@ const renderLayout = ({ settings, preheader, body }) => {
 
 const approvedTicketTemplate = ({ settings, ticket, raffle, resend }) => {
   const title = resend ? "Aquí están de nuevo tus seriales" : "¡Tu compra fue aprobada!";
+  const winningCodes = ticket.approvalCodes.filter((code) => raffle.prizeNumbers?.includes(code));
+  const winnerNotice = winningCodes.length
+    ? `<div style="margin:0 0 24px;padding:18px;border:2px solid ${COLORS.gold};border-radius:14px;background:#1C1810;">
+        <p style="margin:0;color:${COLORS.goldLight};font-size:22px;font-weight:bold;">¡HAS SIDO GANADOR!</p>
+        <p style="margin:8px 0 0;">Tu número${winningCodes.length === 1 ? "" : "s"} premiado${winningCodes.length === 1 ? "" : "s"}: <strong>${escapeHtml(winningCodes.join(", "))}</strong></p>
+        ${raffle.prizeNumberAmount ? `<p style="margin:8px 0 0;">Premio: <strong>${escapeHtml(raffle.prizeNumberAmount)}</strong></p>` : ""}
+      </div>`
+    : "";
   const body = `
     <p style="margin:0;color:${COLORS.gold};font-size:12px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;">${escapeHtml(raffle.name)}</p>
     <h1 style="margin:8px 0 12px;color:${COLORS.goldLight};font-size:26px;">${title}</h1>
     <p style="margin:0 0 24px;">Hola <strong>${escapeHtml(ticket.fullName)}</strong>, ¡gracias por tu compra! Estos son los números de serie de tus stickers:</p>
+    ${winnerNotice}
     <div style="margin:0 0 24px;">${renderCodes(ticket.approvalCodes)}</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align:left;">
       ${infoRow("Stickers", String(ticket.approvalCodes.length))}
