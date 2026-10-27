@@ -86,13 +86,21 @@ const requireActiveRaffle = async () => {
 
 const getCurrent = async (req, res) => {
   const raffle = await findActiveRaffle().select("-images").lean();
-  if (!raffle) return res.json({ raffle: null, stats: null });
+  if (!raffle) return res.json({ raffle: null, stats: null, drawnPrizeNumbers: [] });
 
   const stats = await getTicketStats(raffle._id);
+  const drawnPrizeNumbers = raffle.prizeNumbers?.length
+    ? await Ticket.distinct("approvalCodes", {
+        raffleId: raffle._id,
+        approved: true,
+        approvalCodes: { $in: raffle.prizeNumbers },
+      })
+    : [];
   const { totalTickets, expenses, goalPercent, campaignDays, prizeNumbersCount, ...publicRaffle } = raffle;
   const available = raffle.visible ? Math.max(0, totalTickets - stats.sold - stats.pending) : 0;
   res.json({
     raffle: publicRaffle,
+    drawnPrizeNumbers,
     stats: {
       availablePercent: Math.max(0, Math.round((available / totalTickets) * 1000) / 10),
       maxPurchasable: Math.min(raffle.maxTicketsPerPurchase, available),
