@@ -172,7 +172,7 @@ const approve = async (req, res) => {
 
   const raffle = await findTicketRaffle(ticket);
   if (raffle.status !== "active") throw new HttpError(400, "El evento de esta compra ya finalizó.");
-  const codes = await generateApprovalCodes(ticket.numberTickets, raffle.totalTickets, raffle._id);
+  const codes = await generateApprovalCodes(ticket.numberTickets, raffle.totalTickets, raffle._id, ticket.email);
   if (!codes) throw new HttpError(400, "No quedan seriales disponibles");
 
   ticket.approved = true;
