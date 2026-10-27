@@ -178,17 +178,19 @@ const listNumbers = async (req, res) => {
   const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
   const limit = Math.min(100, Math.max(1, Number.parseInt(req.query.limit, 10) || 50));
   const search = String(req.query.q || "").trim();
-  const winnersOnly = req.query.winnersOnly === "true";
 
   if (!raffleId) return res.json({ items: [], total: 0, page: 1, pages: 1 });
 
   const raffle = await Raffle.findById(raffleId).select("prizeNumbers").lean();
   if (!raffle) throw new HttpError(404, "Evento no encontrado.");
   const prizeNumbers = raffle.prizeNumbers ?? [];
-  const match = { raffleId, approved: true };
-  if (winnersOnly) match.approvalCodes = { $in: prizeNumbers };
+  if (!prizeNumbers.length) return res.json({ items: [], total: 0, page: 1, pages: 1 });
 
-  const pipeline = [{ $match: match }, { $unwind: "$approvalCodes" }];
+  const pipeline = [
+    { $match: { raffleId, approved: true, approvalCodes: { $in: prizeNumbers } } },
+    { $unwind: "$approvalCodes" },
+    { $match: { approvalCodes: { $in: prizeNumbers } } },
+  ];
   if (search) {
     const pattern = new RegExp(escapeRegex(search), "i");
     pipeline.push({
@@ -212,7 +214,7 @@ const listNumbers = async (req, res) => {
               email: 1,
               phone: 1,
               createdAt: 1,
-              winner: { $in: ["$approvalCodes", prizeNumbers] },
+              winner: { $literal: true },
             },
           },
         ],
