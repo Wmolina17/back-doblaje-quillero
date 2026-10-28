@@ -13,7 +13,7 @@ const {
   IMAGE_LIMITS,
   isValidImage,
 } = require("../utils/validation");
-const { getActiveRaffle, getTicketStats, resolveRaffleId, findActiveRaffle } = require("../services/raffle.service");
+const { getActiveRaffle, getTicketStats, resolveRaffleId, findActiveRaffle, getMinimumTickets } = require("../services/raffle.service");
 const { sendApprovedTicketEmail } = require("../services/email.service");
 
 const MAX_PAGE_SIZE = 200;
@@ -54,10 +54,11 @@ const create = async (req, res) => {
   const raffle = await getActiveRaffle();
   if (!raffle.visible) throw new HttpError(400, "La colección no está disponible en este momento.");
 
-  if (!Number.isInteger(quantity) || quantity < raffle.minTickets || quantity > raffle.maxTicketsPerPurchase) {
+  const minTickets = getMinimumTickets(raffle);
+  if (!Number.isInteger(quantity) || quantity < minTickets || quantity > raffle.maxTicketsPerPurchase) {
     throw new HttpError(
       400,
-      `Debes comprar entre ${raffle.minTickets} y ${raffle.maxTicketsPerPurchase} stickers.`,
+      `Debes comprar entre ${minTickets} y ${raffle.maxTicketsPerPurchase} números.`,
     );
   }
 

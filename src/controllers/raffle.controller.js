@@ -2,7 +2,7 @@ const Raffle = require("../models/Raffle");
 const Ticket = require("../models/Ticket");
 const { HttpError } = require("../utils/http");
 const { IMAGE_LIMITS, isValidImage, isHttpUrl } = require("../utils/validation");
-const { getTicketStats, findActiveRaffle } = require("../services/raffle.service");
+const { getTicketStats, findActiveRaffle, getMinimumTickets, MIN_TICKETS_PER_PURCHASE } = require("../services/raffle.service");
 const { generatePrizeNumbers } = require("../utils/prizeNumbers");
 
 const DEFAULT_TOTAL_TICKETS = 10000;
@@ -22,6 +22,9 @@ const parseRaffleInput = (body, { partial }) => {
     const value = Number(body[key]);
     if (!Number.isFinite(value) || value < 0) throw new HttpError(400, `Valor inválido para ${key}`);
     data[key] = key === "ticketPrice" ? value : Math.floor(value);
+  }
+  if (data.minTickets !== undefined && data.minTickets < MIN_TICKETS_PER_PURCHASE) {
+    throw new HttpError(400, `La compra mínima debe ser de al menos ${MIN_TICKETS_PER_PURCHASE} números.`);
   }
   if (data.goalPercent !== undefined && (data.goalPercent < 1 || data.goalPercent > 100)) {
     throw new HttpError(400, "La meta de venta debe estar entre 1% y 100%.");
@@ -96,10 +99,11 @@ const getCurrent = async (req, res) => {
         approvalCodes: { $in: raffle.prizeNumbers },
       })
     : [];
-  const { totalTickets, expenses, goalPercent, campaignDays, prizeNumbersCount, ...publicRaffle } = raffle;
+  const { expenses, goalPercent, campaignDays, prizeNumbersCount, ...publicRaffle } = raffle;
+  const { totalTickets } = raffle;
   const available = raffle.visible ? Math.max(0, totalTickets - stats.sold - stats.pending) : 0;
   res.json({
-    raffle: publicRaffle,
+    raffle: { ...publicRaffle, minTickets: getMinimumTickets(raffle) },
     drawnPrizeNumbers,
     stats: {
       availablePercent: Math.max(0, Math.round((available / totalTickets) * 1000) / 10),

@@ -5,6 +5,9 @@ const { HttpError } = require("../utils/http");
 
 const findActiveRaffle = () => Raffle.findOne({ status: "active" });
 
+const MIN_TICKETS_PER_PURCHASE = 6;
+const getMinimumTickets = (raffle) => Math.max(MIN_TICKETS_PER_PURCHASE, raffle.minTickets);
+
 const getActiveRaffle = async () => {
   const raffle = await findActiveRaffle();
   if (!raffle) throw new HttpError(400, "No hay una colección disponible en este momento.");
@@ -39,4 +42,4 @@ const getTicketStats = async (raffleId) => {
   };
 };
 
-module.exports = { findActiveRaffle, getActiveRaffle, resolveRaffleId, getTicketStats };
+module.exports = { findActiveRaffle, getActiveRaffle, resolveRaffleId, getTicketStats, getMinimumTickets, MIN_TICKETS_PER_PURCHASE };

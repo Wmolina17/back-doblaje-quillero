@@ -9,6 +9,9 @@ const COLORS = {
   goldLight: "#F5D77A",
   text: "#E8E6E1",
   muted: "#9A927F",
+  green: "#86EFAC",
+  greenBorder: "#22C55E",
+  greenBackground: "#10291B",
 };
 
 const SOCIAL_LABELS = {
@@ -55,11 +58,13 @@ const infoRow = (label, value) => `
     <td align="right" style="padding:8px 0;border-bottom:1px solid #2A2415;color:${COLORS.text};font-size:14px;font-weight:bold;">${escapeHtml(value)}</td>
   </tr>`;
 
-const renderCodes = (codes) =>
+const renderCodes = (codes, winningCodes) =>
   codes
     .map(
-      (code) =>
-        `<span style="display:inline-block;margin:4px;padding:10px 16px;border-radius:10px;background:#1C1810;border:1px solid ${COLORS.gold};color:${COLORS.goldLight};font-family:'Courier New',monospace;font-size:20px;font-weight:bold;letter-spacing:3px;">${escapeHtml(code)}</span>`,
+      (code) => {
+        const winner = winningCodes.includes(code);
+        return `<span style="display:inline-block;vertical-align:top;margin:4px;padding:10px 16px;border-radius:10px;background:${winner ? COLORS.greenBackground : "#1C1810"};border:1px solid ${winner ? COLORS.greenBorder : COLORS.gold};color:${winner ? COLORS.green : COLORS.goldLight};font-family:'Courier New',monospace;font-size:20px;font-weight:bold;letter-spacing:3px;">${escapeHtml(code)}${winner ? '<span style="display:block;margin-top:4px;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:1px;">PREMIADO</span>' : ""}</span>`;
+      },
     )
     .join("");
 
@@ -132,18 +137,21 @@ const approvedTicketTemplate = ({ settings, ticket, raffle, resend }) => {
   const title = resend ? "Aquí están de nuevo tus seriales" : "¡Tu compra fue aprobada!";
   const winningCodes = ticket.approvalCodes.filter((code) => raffle.prizeNumbers?.includes(code));
   const winnerNotice = winningCodes.length
-    ? `<div style="margin:0 0 24px;padding:18px;border:2px solid ${COLORS.gold};border-radius:14px;background:#1C1810;">
-        <p style="margin:0;color:${COLORS.goldLight};font-size:22px;font-weight:bold;">¡HAS SIDO GANADOR!</p>
+    ? `<div style="margin:0 0 24px;padding:18px;border:2px solid ${COLORS.greenBorder};border-radius:14px;background:${COLORS.greenBackground};">
+        <p style="margin:0;color:${COLORS.green};font-size:22px;font-weight:bold;">¡HAS SIDO GANADOR!</p>
         <p style="margin:8px 0 0;">Tu número${winningCodes.length === 1 ? "" : "s"} premiado${winningCodes.length === 1 ? "" : "s"}: <strong>${escapeHtml(winningCodes.join(", "))}</strong></p>
-        ${raffle.prizeNumberAmount ? `<p style="margin:8px 0 0;">Premio: <strong>${escapeHtml(raffle.prizeNumberAmount)}</strong></p>` : ""}
+        ${raffle.prizeNumberAmount ? `<p style="margin:8px 0 0;">Premio: <strong>${escapeHtml(raffle.prizeNumberAmount)} por cada número verde</strong></p>` : ""}
+        <p style="margin:8px 0 0;">No tienes que esperar al sorteo de la Lotería de Medellín para ganar este premio. Tu número verde sigue participando por los iPhone.</p>
+        <p style="margin:8px 0 0;">Contacta a soporte con tu número y referencia de compra para verificar y gestionar tu premio.</p>
       </div>`
     : "";
   const body = `
     <p style="margin:0;color:${COLORS.gold};font-size:12px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;">${escapeHtml(raffle.name)}</p>
     <h1 style="margin:8px 0 12px;color:${COLORS.goldLight};font-size:26px;">${title}</h1>
-    <p style="margin:0 0 24px;">Hola <strong>${escapeHtml(ticket.fullName)}</strong>, ¡gracias por tu compra! Estos son los números de serie de tus stickers:</p>
+    <p style="margin:0 0 24px;">Hola <strong>${escapeHtml(ticket.fullName)}</strong>, ¡gracias por tu compra! Estos son los números de participación de tus stickers digitales:</p>
     ${winnerNotice}
-    <div style="margin:0 0 24px;">${renderCodes(ticket.approvalCodes)}</div>
+    <div style="margin:0 0 24px;">${renderCodes(ticket.approvalCodes, winningCodes)}</div>
+    ${raffle.prizeNumbers?.length ? `<p style="margin:0 0 24px;color:${COLORS.text};font-size:14px;">Revisa todos tus números: los marcados en <strong style="color:${COLORS.green};">VERDE</strong> y con la etiqueta <strong>PREMIADO</strong> tienen un premio${raffle.prizeNumberAmount ? ` de ${escapeHtml(raffle.prizeNumberAmount)} cada uno` : ""}.</p>` : ""}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align:left;">
       ${infoRow("Stickers", String(ticket.approvalCodes.length))}
       ${infoRow("Método de pago", ticket.paymentMethod)}
@@ -151,7 +159,7 @@ const approvedTicketTemplate = ({ settings, ticket, raffle, resend }) => {
       ${infoRow("Referencia", ticket.reference)}
       ${raffle.drawDate ? infoRow("Fecha de premiación", formatDate(raffle.drawDate)) : ""}
     </table>
-    <p style="margin:24px 0 0;color:${COLORS.muted};font-size:13px;">Cada sticker trae un serial único y algunos vienen premiados. Entre más stickers, más chance. ¡Mucha suerte, mi llave!</p>
+    <p style="margin:24px 0 0;color:${COLORS.muted};font-size:13px;">Los iPhone se sortearán con la Lotería de Medellín cuando se venda el 100 % de los números. La fecha oficial se anunciará con anticipación en nuestras redes sociales y en la página. ¡Mucha suerte, mi llave!</p>
     ${button(env.siteUrl, "Ver la colección")}`;
 
   return renderLayout({
