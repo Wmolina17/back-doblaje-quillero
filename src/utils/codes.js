@@ -8,9 +8,10 @@ const getUsedCodes = async (raffleId) => {
   return new Set(tickets.flatMap((ticket) => ticket.approvalCodes));
 };
 
-const generateApprovalCodes = async (count, totalTickets, raffleId, userEmail) => {
+const generateApprovalCodes = async (count, totalTickets, raffleId, userEmail, excludedCodes = []) => {
   const used = await getUsedCodes(raffleId);
-  if (used.size + count > totalTickets) return null;
+  const reserved = new Set([...used, ...excludedCodes]);
+  if (reserved.size + count > totalTickets) return null;
 
   const length = codeLength(totalTickets);
   const codes = new Set();
@@ -24,7 +25,7 @@ const generateApprovalCodes = async (count, totalTickets, raffleId, userEmail) =
 
   while (codes.size < count) {
     const code = String(crypto.randomInt(0, totalTickets)).padStart(length, "0");
-    if (!used.has(code)) codes.add(code);
+    if (!reserved.has(code)) codes.add(code);
   }
 
   return Array.from(codes);

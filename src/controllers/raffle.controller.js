@@ -16,6 +16,7 @@ const parseRaffleInput = (body, { partial }) => {
   if (has("prizeNumberAmount")) data.prizeNumberAmount = String(body.prizeNumberAmount).trim();
   if (has("drawDate")) data.drawDate = body.drawDate ? new Date(body.drawDate) : null;
   if (has("visible")) data.visible = Boolean(body.visible);
+  if (has("prizeNumbersBlocked")) data.prizeNumbersBlocked = Boolean(body.prizeNumbersBlocked);
 
   for (const key of ["ticketPrice", "minTickets", "maxTicketsPerPurchase", "totalTickets", "goalPercent", "campaignDays"]) {
     if (!has(key)) continue;

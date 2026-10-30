@@ -29,6 +29,7 @@ const RaffleSchema = new mongoose.Schema(
     prizes: [PrizeSchema],
     prizeNumbersCount: { type: Number, default: 0, min: 0 },
     prizeNumbers: [String],
+    prizeNumbersBlocked: { type: Boolean, default: false },
     prizeNumberAmount: { type: String, trim: true },
     expenses: [ExpenseSchema],
     goalPercent: { type: Number, default: 85, min: 1, max: 100 },

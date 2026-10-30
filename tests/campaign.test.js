@@ -11,6 +11,7 @@ const Ticket = require("../src/models/Ticket");
 const Raffle = require("../src/models/Raffle");
 const PaymentMethod = require("../src/models/PaymentMethod");
 const Settings = require("../src/models/Settings");
+const { generateApprovalCodes } = require("../src/utils/codes");
 
 const raffle = {
   _id: "000000000000000000000001",
@@ -149,4 +150,13 @@ test("admin creation cannot configure a minimum below six", async (t) => {
   t.mock.method(Raffle, "exists", async () => false);
   await assert.rejects(raffleController.create({ body: { name: "Test", ticketPrice: 2500, minTickets: 5 } }, {}), (error) =>
     error.status === 400 && /al menos 6/.test(error.message));
+});
+
+test("approval code generator excludes reserved prize numbers and detects exhaustion", async (t) => {
+  t.mock.method(Ticket, "find", () => ({ lean: async () => [] }));
+  const prizeNumbers = Array.from({ length: 9 }, (_, index) => String(index));
+  const codes = await generateApprovalCodes(1, 10, raffle._id, "test@example.com", prizeNumbers);
+  assert.ok(codes);
+  assert.equal(prizeNumbers.includes(codes[0]), false);
+  assert.equal(await generateApprovalCodes(2, 10, raffle._id, "test@example.com", prizeNumbers), null);
 });
